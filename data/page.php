@@ -1,5 +1,6 @@
 <?php
 $list_page = array(
+    //Đây là đoạn code về giới thiệu
     1 => array(
         'id' => 1,
         'post_name' => "Giới thiệu",
@@ -17,4 +18,4 @@ $list_page = array(
         <p>Magic Keyboard có hành trình phím 1 mm mang lại trải nghiệm gõ nhạy, thoải mái và yên tĩnh, bàn phím còn được trang bị thêm đèn nền vừa tạo cảm giác sang trọng vừa hỗ trợ bạn gõ phím chính xác hơn trong môi trường thiếu sáng.</p>"
     )
 );
-?>
+?> 
