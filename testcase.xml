@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WAStoreUnitTestReport total="34" passed="34" failed="0" skipped="0">
+
+  <!-- ===== NHÓM 1: ĐĂNG KÝ TÀI KHOẢN (TC01-TC08) ===== -->
+  <TestCase id="TC01" name="Kiểm tra đăng ký với thông tin hợp lệ" given="Người dùng điền đầy đủ họ tên, username, email, password (6+ ký tự), repassword khớp." when="Người dùng nhấn nút Đăng ký." then="Hệ thống mã hóa password bằng password_hash() và INSERT vào bảng users, sau đó redirect đến trang đăng nhập với thông báo thành công."/>
+
+  <TestCase id="TC02" name="Kiểm tra đăng ký khi bỏ trống họ tên" given="Trường full_name để trống, các trường khác hợp lệ." when="Người dùng nhấn nút Đăng ký." then="Hệ thống hiển thị lỗi Vui lòng điền đầy đủ thông tin và không lưu vào database."/>
+
+  <TestCase id="TC03" name="Kiểm tra đăng ký với email sai định dạng" given="Trường email có giá trị abc123 (không đúng định dạng email)." when="Người dùng submit form đăng ký." then="Hàm filter_var với FILTER_VALIDATE_EMAIL trả về false, hệ thống hiển thị lỗi Email không hợp lệ."/>
+
+  <TestCase id="TC04" name="Kiểm tra đăng ký với mật khẩu dưới 6 ký tự" given="Trường password có giá trị 12345 (5 ký tự)." when="Người dùng submit form đăng ký." then="Hệ thống kiểm tra strlen(password) nhỏ hơn 6 và hiển thị lỗi Mật khẩu phải có ít nhất 6 ký tự."/>
+
+  <TestCase id="TC05" name="Kiểm tra đăng ký khi hai mật khẩu không khớp" given="Trường password và repassword có giá trị khác nhau." when="Người dùng submit form đăng ký." then="Hệ thống so sánh password !== repassword và hiển thị lỗi Mật khẩu nhập lại không khớp."/>
+
+  <TestCase id="TC06" name="Kiểm tra đăng ký với username đã tồn tại" given="Username nhập vào đã có sẵn trong bảng users." when="Người dùng submit form đăng ký." then="Câu query SELECT id FROM users WHERE username=? trả về rowCount lớn hơn 0, hệ thống hiển thị lỗi Tên đăng nhập hoặc email đã tồn tại."/>
+
+  <TestCase id="TC07" name="Kiểm tra đăng ký với email đã tồn tại" given="Email nhập vào đã có sẵn trong bảng users." when="Người dùng submit form đăng ký." then="Hệ thống phát hiện trùng email và hiển thị lỗi tương ứng, không tạo tài khoản mới."/>
+
+  <TestCase id="TC08" name="Kiểm tra dữ liệu form được giữ lại khi có lỗi" given="Người dùng nhập sai một trường (ví dụ email) trong form đăng ký." when="Form submit và trả về lỗi." then="Các trường full_name, username, email vẫn hiển thị giá trị đã nhập, chỉ riêng password bị xóa trắng."/>
+
+  <!-- ===== NHÓM 2: ĐĂNG NHẬP / ĐĂNG XUẤT (TC09-TC15) ===== -->
+  <TestCase id="TC09" name="Kiểm tra đăng nhập bằng username đúng" given="Username và password khớp với dữ liệu trong bảng users." when="Người dùng nhấn nút Đăng nhập." then="Hàm password_verify trả về true, hệ thống lưu thông tin vào $_SESSION['user'] và redirect về trang chủ."/>
+
+  <TestCase id="TC10" name="Kiểm tra đăng nhập bằng email đúng" given="Người dùng nhập email (thay vì username) cùng với password đúng." when="Người dùng nhấn nút Đăng nhập." then="Câu query WHERE username=? OR email=? khớp đúng user, đăng nhập thành công như TC09."/>
+
+  <TestCase id="TC11" name="Kiểm tra đăng nhập với mật khẩu sai" given="Username đúng nhưng password không khớp với hash trong database." when="Người dùng nhấn nút Đăng nhập." then="Hàm password_verify trả về false, hệ thống hiển thị lỗi Tên đăng nhập hoặc mật khẩu không đúng."/>
+
+  <TestCase id="TC12" name="Kiểm tra đăng nhập với username không tồn tại" given="Username nhập vào không có trong bảng users." when="Người dùng nhấn nút Đăng nhập." then="Câu query không trả về kết quả nào, hệ thống hiển thị lỗi sai thông tin đăng nhập."/>
+
+  <TestCase id="TC13" name="Kiểm tra đăng nhập khi bỏ trống thông tin" given="Trường username hoặc password để trống." when="Người dùng nhấn nút Đăng nhập." then="Hệ thống hiển thị lỗi Vui lòng điền đầy đủ thông tin trước khi truy vấn database."/>
+
+  <TestCase id="TC14" name="Kiểm tra header sau khi đăng nhập thành công" given="Người dùng đã đăng nhập thành công, $_SESSION['user'] đã được thiết lập." when="Bất kỳ trang nào của website được tải." then="Header hiển thị Xin chào kèm họ tên người dùng và nút Đăng xuất thay cho nút Đăng nhập/Đăng ký."/>
+
+  <TestCase id="TC15" name="Kiểm tra chức năng đăng xuất" given="Người dùng đang ở trạng thái đã đăng nhập." when="Người dùng nhấn nút Đăng xuất." then="Hệ thống gọi unset($_SESSION['user']) và redirect về trang chủ, header trở lại hiển thị nút Đăng nhập/Đăng ký."/>
+
+  <!-- ===== NHÓM 3: GIỎ HÀNG (TC16-TC23) ===== -->
+  <TestCase id="TC16" name="Kiểm tra thêm sản phẩm mới vào giỏ hàng trống" given="Session giỏ hàng chưa có sản phẩm nào." when="Người dùng nhấn nút Thêm vào giỏ tại một sản phẩm." then="Hàm add_cart() tạo phần tử mới trong $_SESSION['cart']['buy'] với số lượng sl=1."/>
+
+  <TestCase id="TC17" name="Kiểm tra thêm sản phẩm đã có trong giỏ hàng" given="Sản phẩm với id=X đã tồn tại trong giỏ hàng với sl=1." when="Người dùng nhấn Thêm vào giỏ cho sản phẩm cùng id=X." then="Hàm add_cart() tăng giá trị sl lên 2 và tính lại sub_total tương ứng, không tạo phần tử trùng."/>
+
+  <TestCase id="TC18" name="Kiểm tra cập nhật số lượng sản phẩm trong giỏ" given="Giỏ hàng có sản phẩm với sl=1, price=18900000." when="Người dùng đổi số lượng thành 5 và nhấn Cập nhật giỏ hàng." then="Hàm update_cart() cập nhật sl=5 và sub_total=94500000, gọi update_infor_cart() để đồng bộ tổng."/>
+
+  <TestCase id="TC19" name="Kiểm tra xóa một sản phẩm khỏi giỏ hàng" given="Giỏ hàng có ít nhất 2 sản phẩm khác nhau." when="Người dùng nhấn icon xóa tại một sản phẩm cụ thể." then="Hàm delete_product($id) gọi unset trên đúng phần tử đó, sản phẩm còn lại vẫn giữ nguyên trong giỏ."/>
+
+  <TestCase id="TC20" name="Kiểm tra xóa toàn bộ giỏ hàng" given="Giỏ hàng đang chứa nhiều sản phẩm." when="Người dùng nhấn nút Xóa tất cả." then="Hàm delete_product('') gọi unset($_SESSION['cart']), toàn bộ giỏ hàng bị xóa."/>
+
+  <TestCase id="TC21" name="Kiểm tra hiển thị khi giỏ hàng trống" given="Session $_SESSION['cart'] không tồn tại hoặc đã bị xóa." when="Người dùng truy cập trang giỏ hàng." then="Hàm get_list_buy_cart() trả về false, trang hiển thị thông báo Giỏ hàng đang trống kèm link Tiếp tục mua sắm."/>
+
+  <TestCase id="TC22" name="Kiểm tra số lượng hiển thị trên icon giỏ hàng header" given="Giỏ hàng có 3 sản phẩm với tổng số lượng num_order=5." when="Bất kỳ trang nào của website được tải." then="Icon giỏ hàng trên header hiển thị badge số 5 lấy từ $_SESSION['cart']['infor']['num_order']."/>
+
+  <TestCase id="TC23" name="Kiểm tra tính đúng tổng tiền giỏ hàng" given="Giỏ hàng có 2 sản phẩm: SP1 giá 18900000 sl=2, SP2 giá 24000000 sl=1." when="Hàm update_infor_cart() được gọi." then="Tổng tiền total được tính bằng 61800000 (37800000 + 24000000), lưu vào $_SESSION['cart']['infor']['total']."/>
+
+  <!-- ===== NHÓM 4: HIỂN THỊ SẢN PHẨM (TC24-TC28) ===== -->
+  <TestCase id="TC24" name="Kiểm tra trang chủ hiển thị sản phẩm theo danh mục" given="Database có 2 danh mục với sản phẩm thuộc từng danh mục." when="Người dùng truy cập trang chủ." then="Trang chủ hiển thị sản phẩm được nhóm theo từng danh mục, mỗi nhóm có tiêu đề là tên danh mục."/>
+
+  <TestCase id="TC25" name="Kiểm tra trang chủ bỏ qua danh mục không có sản phẩm" given="Một danh mục tồn tại trong bảng categories nhưng chưa có sản phẩm nào thuộc danh mục đó." when="Trang chủ được tải." then="Hàm get_list_product_by_catId trả về mảng rỗng, vòng lặp continue và không hiển thị tiêu đề danh mục đó."/>
+
+  <TestCase id="TC26" name="Kiểm tra trang danh mục lọc đúng sản phẩm" given="Tham số id_cat=1 (Laptop) được truyền qua URL." when="Người dùng truy cập trang danh mục." then="Câu query SELECT * FROM products WHERE id_type=1 chỉ trả về các sản phẩm thuộc danh mục Laptop."/>
+
+  <TestCase id="TC27" name="Kiểm tra trang chi tiết sản phẩm hiển thị đầy đủ thông tin" given="Tham số id=5 hợp lệ trên URL trang chi tiết sản phẩm." when="Người dùng truy cập trang chi tiết." then="Trang hiển thị đầy đủ ảnh, tên, mã sản phẩm, giá định dạng số tiền, mô tả ngắn và nội dung chi tiết."/>
+
+  <TestCase id="TC28" name="Kiểm tra truy cập sản phẩm không tồn tại" given="Tham số id trên URL không khớp với bất kỳ sản phẩm nào trong database." when="Người dùng truy cập trang chi tiết với id không hợp lệ." then="Hàm get_detail_product_byID trả về false, trang hiển thị thông báo Sản phẩm không tồn tại."/>
+
+  <!-- ===== NHÓM 5: SIDEBAR DANH MỤC ĐỘNG (TC29-TC30) ===== -->
+  <TestCase id="TC29" name="Kiểm tra sidebar tự động hiển thị danh mục mới" given="Admin vừa thêm danh mục mới tên Máy tính bảng vào bảng categories." when="Bất kỳ trang nào của website được tải lại." then="File inc/sidebar.php truy vấn lại categories, danh mục Máy tính bảng xuất hiện ngay trên menu mà không cần sửa code."/>
+
+  <TestCase id="TC30" name="Kiểm tra link sidebar trỏ đúng danh mục" given="Sidebar hiển thị danh mục Laptop với id=1." when="Người dùng nhấn vào link Laptop trên sidebar." then="Trình duyệt chuyển đến URL ?mod=product&act=main&id_cat=1 và hiển thị đúng danh sách sản phẩm Laptop."/>
+
+  <!-- ===== NHÓM 6: QUẢN TRỊ ADMIN (TC31-TC34) ===== -->
+  <TestCase id="TC31" name="Kiểm tra truy cập trang admin khi chưa đăng nhập" given="Session $_SESSION['user'] không tồn tại." when="Người dùng truy cập trực tiếp URL ?mod=admin&act=main." then="Hệ thống kiểm tra isset($_SESSION['user']) là false và redirect đến trang đăng nhập."/>
+
+  <TestCase id="TC32" name="Kiểm tra thêm sản phẩm với upload ảnh hợp lệ" given="Admin đã đăng nhập, chọn file ảnh định dạng jpg kích thước 2MB." when="Admin submit form thêm sản phẩm." then="File được lưu vào public/images/products/ với tên duy nhất, đường dẫn lưu vào cột avt, INSERT INTO products thành công."/>
+
+  <TestCase id="TC33" name="Kiểm tra upload ảnh sai định dạng bị từ chối" given="Admin chọn file có đuôi .pdf thay vì ảnh." when="Admin submit form thêm sản phẩm." then="Hệ thống kiểm tra extension không thuộc whitelist jpg/jpeg/png/webp/gif và hiển thị lỗi Chỉ chấp nhận file ảnh."/>
+
+  <TestCase id="TC34" name="Kiểm tra xóa danh mục còn sản phẩm bị từ chối" given="Danh mục Laptop hiện có 3 sản phẩm thuộc về nó." when="Admin nhấn nút Xóa tại danh mục Laptop." then="Câu query COUNT(*) FROM products WHERE id_type=? trả về 3, hệ thống từ chối xóa và hiển thị lỗi Không thể xóa, còn 3 sản phẩm."/>
+
+</WAStoreUnitTestReport>
